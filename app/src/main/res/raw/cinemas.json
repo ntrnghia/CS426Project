@@ -1,0 +1,32 @@
+[
+  {
+    "id": 0,
+    "avatar_name": "dongda",
+    "avatar_internal": false,
+    "name": "Rạp Đống Đa",
+    "location": "890 Đường Trần Hưng Đạo, Phường 7, Quận 5, Hồ Chí Minh",
+    "description": "Cụm rạp Đống Đa là 1 trong những cụm rạp lâu đời nhất của Sài Gòn. Hiện cụm rạp đang được nâng cấp từng phần để cạnh tranh với các cụm rạp mới khác.",
+    "url": "http://ddcinema.vn/trang-chu",
+    "phone": "02839234833"
+  },
+  {
+    "id": 1,
+    "avatar_name": "bhdstarcineplex",
+    "avatar_internal": false,
+    "name": "BHD Star Cineplex Phạm Hùng",
+    "location": "Siêu Thị Satra Phạm Hùng, C6/27 Phạm Hùng, Bình Hưng, Bình Chánh, Hồ Chí Minh",
+    "description": "Thuộc cụm rạp BHD Star, nằm tại khu vực giáp Quận 8 và Bình Chánh, và sở hữu 6 phòng chiếu, BHD Phạm Hùng đã giúp khán giả tiết kiệm được thời gian di chuyển nhưng vẫn có được những trải nghiệm điện ảnh thực thụ với giá vé phù hợp cùng nhiều chương trình khuyến mãi hấp dẫn.",
+    "url": "https://www.bhdstar.vn/",
+    "phone": "02837580123"
+  },
+  {
+    "id": 2,
+    "avatar_name": "lottenowzone",
+    "avatar_internal": false,
+    "name": "Lotte Cinema Nowzone",
+    "location": "TTTM Nowzone, 235 Đường Nguyễn Văn Cừ, Phường Nguyễn Cư Trinh, Quận 1, Hồ Chí Minh",
+    "description": "Lịch chiếu phim, giá vé cụm rạp Lotte Cinema, Lotte Nowzone tại TTTM Nowzone. Thông tin, lịch chiếu phim, đánh giá phim, khuyến mãi tại rạp chiếu phim Lotte Nowzone luôn được cập nhật nhanh nhất tại Moveek.com.",
+    "url": "https://lottecinemavn.com/vi-vn/default.aspx",
+    "phone": "02839262255"
+  }
+]

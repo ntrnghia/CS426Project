@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!--tools:showIn="navigation_view"-->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_all_cinema"
+            android:icon="@drawable/ic_store_mall_directory_black_24dp"
+            android:title="All cinema" />
+        <item
+            android:id="@+id/nav_bookmarks"
+            android:icon="@drawable/ic_collections_bookmark_black_24dp"
+            android:title="Bookmarks" />
+    </group>
+
+    <item android:title="Info">
+        <menu>
+            <item
+                android:id="@+id/nav_about_us"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:title="About us" />
+        </menu>
+    </item>
+</menu>
