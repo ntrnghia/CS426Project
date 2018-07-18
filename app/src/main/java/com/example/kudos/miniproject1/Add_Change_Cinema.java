@@ -32,7 +32,6 @@ public class Add_Change_Cinema extends AppCompatActivity {
     Cinema cinema;
     Bitmap bitmap;
     Boolean is_change;
-    //hehehehe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
