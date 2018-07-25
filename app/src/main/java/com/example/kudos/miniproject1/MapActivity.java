@@ -64,10 +64,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
                 else {
+                    fab.hide();
                     initLocation();
                     updateAndDisplay();
                 }
-                fab.hide();
             }
         });
     }

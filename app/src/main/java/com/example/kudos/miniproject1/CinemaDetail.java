@@ -159,7 +159,7 @@ public class CinemaDetail extends AppCompatActivity {
                 editor.putString("bookmarks", jsonString);
                 editor.apply();
 
-                finish();
+                finishAfterTransition();
                 return true;
         }
         return super.onOptionsItemSelected(item);
