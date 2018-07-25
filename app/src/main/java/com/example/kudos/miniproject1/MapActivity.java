@@ -65,6 +65,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
                 else {
+                    Objects.requireNonNull(getSupportActionBar()).setTitle("Direction");
                     fab.hide();
                     initLocation();
                     updateAndDisplay();
@@ -88,9 +89,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         try {
-            List<Address> addresses = new Geocoder(this).getFromLocationName(cinema.getName(), 1);
+            List<Address> addresses = new Geocoder(this).getFromLocationName(cinema.getLocation(), 1);
             if (addresses.size() != 0) {
-                address = new Geocoder(this).getFromLocationName(cinema.getName(), 1).get(0);
+                address = addresses.get(0);
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Cinema"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
@@ -104,7 +105,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void initLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             return;
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Direction");
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, new LocationListener() {
