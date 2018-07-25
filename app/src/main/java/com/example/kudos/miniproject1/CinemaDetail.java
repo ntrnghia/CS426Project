@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.example.kudos.miniproject1.MainActivity.bookmarks;
 import static com.example.kudos.miniproject1.MainActivity.cinemas;
@@ -168,8 +169,10 @@ public class CinemaDetail extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 0)
+        if (resultCode == RESULT_OK && requestCode == 0) {
             cinema = (Cinema) data.getSerializableExtra("cinema");
+            Objects.requireNonNull(getSupportActionBar()).setTitle(cinema.getName());
+        }
         init();
     }
 }

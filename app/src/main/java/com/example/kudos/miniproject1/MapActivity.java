@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -87,10 +88,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         try {
-            address = new Geocoder(this).getFromLocationName(cinema.getName(), 1).get(0);
-            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Cinema"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+            List<Address> addresses = new Geocoder(this).getFromLocationName(cinema.getName(), 1);
+            if (addresses.size() != 0) {
+                address = new Geocoder(this).getFromLocationName(cinema.getName(), 1).get(0);
+                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Cinema"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+            } else
+                Toast.makeText(this, "Can not find this cinema's location!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
