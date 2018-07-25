@@ -43,7 +43,7 @@ import java.util.Objects;
 
 import static com.example.kudos.miniproject1.MainActivity.cinemas;
 
-public class Add_Change_Cinema extends AppCompatActivity {
+public class AddChangeCinemaActivity extends AppCompatActivity {
 
     Cinema cinema;
     Bitmap bitmap;
@@ -55,8 +55,7 @@ public class Add_Change_Cinema extends AppCompatActivity {
         setContentView(R.layout.activity_add_change_cinema);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        ActionBar actionbar = getSupportActionBar();
-        if (actionbar != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         is_change = getIntent().getBooleanExtra("is_change", false);
         if (is_change) {
@@ -131,6 +130,9 @@ public class Add_Change_Cinema extends AppCompatActivity {
                         SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
                         editor.putInt("id", id);
                         editor.apply();
+                        Intent intent = new Intent();
+                        intent.putExtra("cinema", cinema);
+                        setResult(RESULT_OK, intent);
                         finishAfterTransition();
                     }
                 } else {
@@ -183,7 +185,10 @@ public class Add_Change_Cinema extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null)
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location != null)
+        if (location == null) {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+                Toast.makeText(this, "Both GPS and Cellular is disable!", Toast.LENGTH_LONG).show();
+        } else
             try {
                 List<Address> addresses = new Geocoder(this).getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 if (addresses.size() != 0) {

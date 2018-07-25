@@ -42,6 +42,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     Address address;
     static final ArrayList<Polyline> polylineArray = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
+    LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +66,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
                 else {
-                    Objects.requireNonNull(getSupportActionBar()).setTitle("Direction");
-                    fab.hide();
                     initLocation();
                     updateAndDisplay();
                 }
@@ -107,7 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, new LocationListener() {
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Toast.makeText(MapActivity.this, "Your location has changed", Toast.LENGTH_LONG).show();
@@ -128,7 +127,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onProviderDisabled(String provider) {
 
             }
-        });
+        };
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
     }
 
     private void updateAndDisplay() {
@@ -140,7 +140,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null)
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location != null) {
+        if (location == null) {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+                Toast.makeText(this, "Both GPS and Cellular are disable!", Toast.LENGTH_LONG).show();
+        } else {
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Direction");
+            findViewById(R.id.fab).setVisibility(View.INVISIBLE);
             for (Polyline polyline : polylineArray) polyline.remove();
             polylineArray.clear();
             for (Marker marker : markers) marker.remove();
@@ -162,8 +167,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 0:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     initLocation();
+                    updateAndDisplay();
+                }
         }
     }
 
@@ -183,5 +190,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (locationListener != null)
+            ((LocationManager) (getSystemService(Context.LOCATION_SERVICE))).removeUpdates(locationListener);
     }
 }

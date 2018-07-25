@@ -1,28 +1,39 @@
 package com.example.kudos.miniproject1;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -81,11 +92,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setCheckedItem(R.id.nav_all_cinema);
         navigationView.getMenu().performIdentifierAction(R.id.nav_all_cinema, 0);
+
+        final FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddChangeCinemaActivity.class);
+                intent.putExtra("is_change", false);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
+            }
+        });
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         cinemaViewAdapter.notifyDataSetChanged();
     }
 
@@ -93,16 +114,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(R.id.action_add);
-        if (((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_bookmarks).isChecked())
-            menuItem.setVisible(false);
-        else menuItem.setVisible(true);
-        return super.onPrepareOptionsMenu(menu);
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        return true;
     }
 
     @Override
@@ -110,13 +129,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case android.R.id.home:
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.START);
-                return true;
-            case R.id.action_add:
-                Intent intent = new Intent(MainActivity.this, Add_Change_Cinema.class);
-                intent.putExtra("is_change", false);
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-                return true;
-            case R.id.app_bar_search:
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -126,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_all_cinema:
-                invalidateOptionsMenu();
+                findViewById(R.id.fab).setVisibility(View.VISIBLE);
                 getSupportActionBar().setTitle("All cinema");
                 ListView listView = findViewById(R.id.list_view);
                 cinemaViewAdapter = new CinemaViewAdapter(MainActivity.this, R.layout.cinema_item, cinemas);
@@ -134,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, CinemaDetail.class);
+                        Intent intent = new Intent(MainActivity.this, CinemaDetailActivity.class);
                         intent.putExtra("cinema", cinemas.get(position));
                         View view1 = view.findViewById(R.id.img_avatar);
                         View view2 = view.findViewById(R.id.txtName);
@@ -145,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
                 return true;
             case R.id.nav_bookmarks:
-                invalidateOptionsMenu();
+                findViewById(R.id.fab).setVisibility(View.INVISIBLE);
                 getSupportActionBar().setTitle("Bookmarks");
                 listView = findViewById(R.id.list_view);
                 cinemaViewAdapter = new CinemaViewAdapter(MainActivity.this, R.layout.cinema_item, bookmarks);
@@ -153,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, CinemaDetail.class);
+                        Intent intent = new Intent(MainActivity.this, CinemaDetailActivity.class);
                         intent.putExtra("cinema", bookmarks.get(position));
                         View view1 = view.findViewById(R.id.img_avatar);
                         View view2 = view.findViewById(R.id.txtName);

@@ -4,15 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/app_bar_search"
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="Search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_add_black_24dp"
-        android:title="Add cinema"
-        app:showAsAction="ifRoom" />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 
 </menu>

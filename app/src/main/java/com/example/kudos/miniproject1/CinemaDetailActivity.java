@@ -11,9 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +30,7 @@ import java.util.Objects;
 import static com.example.kudos.miniproject1.MainActivity.bookmarks;
 import static com.example.kudos.miniproject1.MainActivity.cinemas;
 
-public class CinemaDetail extends AppCompatActivity {
+public class CinemaDetailActivity extends AppCompatActivity {
 
     Cinema cinema;
 
@@ -129,12 +127,12 @@ public class CinemaDetail extends AppCompatActivity {
                 editor.apply();
                 return true;
             case R.id.action_place:
-                Intent intent = new Intent(CinemaDetail.this, MapActivity.class);
+                Intent intent = new Intent(CinemaDetailActivity.this, MapActivity.class);
                 intent.putExtra("cinema", cinema);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                 return true;
             case R.id.action_change_info:
-                intent = new Intent(this, Add_Change_Cinema.class);
+                intent = new Intent(this, AddChangeCinemaActivity.class);
                 intent.putExtra("cinema", cinema);
                 intent.putExtra("is_change", true);
                 View view1 = findViewById(R.id.img_avatar);
