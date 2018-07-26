@@ -10,12 +10,10 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,11 +24,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -41,18 +34,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.kudos.miniproject1.MainActivity.cinemas;
+import static com.example.kudos.miniproject1.MainActivity.PLACES;
 
-public class AddChangeCinemaActivity extends AppCompatActivity {
+public class AddChangePlaceActivity extends AppCompatActivity {
 
-    Cinema cinema;
+    Place place;
     Bitmap bitmap;
     Boolean is_change;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_change_cinema);
+        setContentView(R.layout.activity_add_change_place);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -60,26 +53,26 @@ public class AddChangeCinemaActivity extends AppCompatActivity {
         is_change = getIntent().getBooleanExtra("is_change", false);
         if (is_change) {
             getSupportActionBar().setTitle("Change information");
-            cinema = (Cinema) getIntent().getSerializableExtra("cinema");
+            place = (Place) getIntent().getSerializableExtra("place");
 
             ImageView imageView = findViewById(R.id.image_add);
-            if (!cinema.isAvatar_internal())
-                imageView.setImageResource(getResources().getIdentifier(cinema.getAvatar_name(), "drawable", getPackageName()));
+            if (!place.isAvatar_internal())
+                imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
             else {
                 try {
-                    File file = new File(getFilesDir(), cinema.getAvatar_name() + ".jpg");
+                    File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
                     Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                     imageView.setImageBitmap(bitmap);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
-            ((EditText) findViewById(R.id.name_add)).setText(cinema.getName());
-            ((EditText) findViewById(R.id.url_add)).setText(cinema.getUrl());
-            ((EditText) findViewById(R.id.phone_add)).setText(cinema.getPhone());
-            ((EditText) findViewById(R.id.location_add)).setText(cinema.getLocation());
-            ((EditText) findViewById(R.id.description_add)).setText(cinema.getDescription());
-        } else getSupportActionBar().setTitle("Add cinema");
+            ((EditText) findViewById(R.id.name_add)).setText(place.getName());
+            ((EditText) findViewById(R.id.url_add)).setText(place.getUrl());
+            ((EditText) findViewById(R.id.phone_add)).setText(place.getPhone());
+            ((EditText) findViewById(R.id.location_add)).setText(place.getLocation());
+            ((EditText) findViewById(R.id.description_add)).setText(place.getDescription());
+        } else getSupportActionBar().setTitle("Add place");
     }
 
     public void btnAddPicture_onclick(View view) {
@@ -125,35 +118,35 @@ public class AddChangeCinemaActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        Cinema new_cinema = new Cinema(id, "cinema_" + id++, true, name.getText().toString(), location.getText().toString(), description.getText().toString(), url.getText().toString(), phone.getText().toString());
-                        cinemas.add(new_cinema);
+                        Place new_place = new Place(id, "cinema_" + id++, true, name.getText().toString(), location.getText().toString(), description.getText().toString(), url.getText().toString(), phone.getText().toString());
+                        PLACES.add(new_place);
                         SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
                         editor.putInt("id", id);
                         editor.apply();
                         Intent intent = new Intent();
-                        intent.putExtra("cinema", cinema);
+                        intent.putExtra("place", place);
                         setResult(RESULT_OK, intent);
                         finishAfterTransition();
                     }
                 } else {
-                    cinema = cinemas.get(cinemas.indexOf(cinema));
+                    place = PLACES.get(PLACES.indexOf(place));
                     if (bitmap != null) {
                         try {
-                            File file = new File(getFilesDir(), cinema.getAvatar_name() + ".jpg");
+                            File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
                             FileOutputStream fileOutputStream = new FileOutputStream(file);
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        cinema.setAvatar_internal(true);
+                        place.setAvatar_internal(true);
                     }
-                    cinema.setName(((EditText) findViewById(R.id.name_add)).getText().toString());
-                    cinema.setLocation(((EditText) findViewById(R.id.location_add)).getText().toString());
-                    cinema.setDescription(((EditText) findViewById(R.id.description_add)).getText().toString());
-                    cinema.setUrl(((EditText) findViewById(R.id.url_add)).getText().toString());
-                    cinema.setPhone(((EditText) findViewById(R.id.phone_add)).getText().toString());
+                    place.setName(((EditText) findViewById(R.id.name_add)).getText().toString());
+                    place.setLocation(((EditText) findViewById(R.id.location_add)).getText().toString());
+                    place.setDescription(((EditText) findViewById(R.id.description_add)).getText().toString());
+                    place.setUrl(((EditText) findViewById(R.id.url_add)).getText().toString());
+                    place.setPhone(((EditText) findViewById(R.id.phone_add)).getText().toString());
                     Intent intent = new Intent();
-                    intent.putExtra("cinema", cinema);
+                    intent.putExtra("place", place);
                     setResult(RESULT_OK, intent);
                     finishAfterTransition();
                 }
@@ -226,9 +219,9 @@ public class AddChangeCinemaActivity extends AppCompatActivity {
         super.onDestroy();
 
         Gson gson = new Gson();
-        String jsonString = gson.toJson(cinemas);
+        String jsonString = gson.toJson(PLACES);
         SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-        editor.putString("cinemas", jsonString);
+        editor.putString("PLACES", jsonString);
         editor.apply();
     }
 }

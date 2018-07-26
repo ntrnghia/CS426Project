@@ -28,26 +28,26 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.example.kudos.miniproject1.MainActivity.bookmarks;
-import static com.example.kudos.miniproject1.MainActivity.cinemas;
+import static com.example.kudos.miniproject1.MainActivity.PLACES;
 
-public class CinemaDetailActivity extends AppCompatActivity {
+public class PlaceDetailActivity extends AppCompatActivity {
 
-    Cinema cinema;
+    Place place;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cinema_detail);
+        setContentView(R.layout.activity_place_detail);
 
         //getWindow().setAllowEnterTransitionOverlap(true);
 
-        cinema = (Cinema) getIntent().getSerializableExtra("cinema");
+        place = (Place) getIntent().getSerializableExtra("place");
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar actionbar = getSupportActionBar();
         if (actionbar != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(cinema.getName());
+            getSupportActionBar().setTitle(place.getName());
         }
 
         init();
@@ -55,38 +55,38 @@ public class CinemaDetailActivity extends AppCompatActivity {
 
     private void init() {
         ImageView imageView = findViewById(R.id.img_avatar);
-        if (!cinema.isAvatar_internal())
-            imageView.setImageResource(getResources().getIdentifier(cinema.getAvatar_name(), "drawable", getPackageName()));
+        if (!place.isAvatar_internal())
+            imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
         else {
             try {
-                File file = new File(getFilesDir(), cinema.getAvatar_name() + ".jpg");
+                File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        ((TextView) findViewById(R.id.txtName)).setText(cinema.getName());
-        ((TextView) findViewById(R.id.txtUrl)).setText(cinema.getUrl());
+        ((TextView) findViewById(R.id.txtName)).setText(place.getName());
+        ((TextView) findViewById(R.id.txtUrl)).setText(place.getUrl());
         findViewById(R.id.txtUrl).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(cinema.getUrl()));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(place.getUrl()));
                 startActivity(browserIntent);
             }
         });
-        String txtPhone = "Tel: " + cinema.getPhone();
+        String txtPhone = "Tel: " + place.getPhone();
         ((TextView) findViewById(R.id.txtPhone)).setText(txtPhone);
         findViewById(R.id.txtPhone).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + cinema.getPhone()));
+                callIntent.setData(Uri.parse("tel:" + place.getPhone()));
                 startActivity(callIntent);
             }
         });
-        ((TextView) findViewById(R.id.txtLoc)).setText(cinema.getLocation());
-        ((TextView) findViewById(R.id.txtDesc)).setText(cinema.getDescription());
+        ((TextView) findViewById(R.id.txtLoc)).setText(place.getLocation());
+        ((TextView) findViewById(R.id.txtDesc)).setText(place.getDescription());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class CinemaDetailActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.cinema_detail_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.action_bookmark);
-        if (!bookmarks.contains(cinema)) menuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
+        if (!bookmarks.contains(place)) menuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
         else menuItem.setIcon(R.drawable.ic_favorite_black_24dp);
         return true;
     }
@@ -107,13 +107,13 @@ public class CinemaDetailActivity extends AppCompatActivity {
                 finishAfterTransition();
                 return true;
             case R.id.action_bookmark:
-                if (!bookmarks.contains(cinema)) {
-                    bookmarks.add(cinema);
-                    Toast.makeText(this, "Added this cinema to bookmarks", Toast.LENGTH_LONG).show();
+                if (!bookmarks.contains(place)) {
+                    bookmarks.add(place);
+                    Toast.makeText(this, "Added this place to bookmarks", Toast.LENGTH_LONG).show();
                     item.setIcon(R.drawable.ic_favorite_black_24dp);
                 } else {
-                    bookmarks.remove(cinema);
-                    Toast.makeText(this, "Removed this cinema from bookmarks", Toast.LENGTH_LONG).show();
+                    bookmarks.remove(place);
+                    Toast.makeText(this, "Removed this place from bookmarks", Toast.LENGTH_LONG).show();
                     item.setIcon(R.drawable.ic_favorite_border_black_24dp);
                 }
                 invalidateOptionsMenu();
@@ -127,13 +127,13 @@ public class CinemaDetailActivity extends AppCompatActivity {
                 editor.apply();
                 return true;
             case R.id.action_place:
-                Intent intent = new Intent(CinemaDetailActivity.this, MapActivity.class);
-                intent.putExtra("cinema", cinema);
+                Intent intent = new Intent(PlaceDetailActivity.this, MapActivity.class);
+                intent.putExtra("place", place);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                 return true;
             case R.id.action_change_info:
-                intent = new Intent(this, AddChangeCinemaActivity.class);
-                intent.putExtra("cinema", cinema);
+                intent = new Intent(this, AddChangePlaceActivity.class);
+                intent.putExtra("place", place);
                 intent.putExtra("is_change", true);
                 View view1 = findViewById(R.id.img_avatar);
                 View view2 = findViewById(R.id.txtName);
@@ -144,13 +144,13 @@ public class CinemaDetailActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0, ActivityOptions.makeSceneTransitionAnimation(this, Pair.create(view1, view1.getTransitionName()), Pair.create(view2, view2.getTransitionName()), Pair.create(view3, view3.getTransitionName()), Pair.create(view4, view4.getTransitionName()), Pair.create(view5, view5.getTransitionName()), Pair.create(view6, view6.getTransitionName())).toBundle());
                 return true;
             case R.id.action_delete:
-                cinemas.remove(cinema);
-                bookmarks.remove(cinema);
+                PLACES.remove(place);
+                bookmarks.remove(place);
 
                 Gson gson = new Gson();
-                jsonString = gson.toJson(cinemas);
+                jsonString = gson.toJson(PLACES);
                 editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-                editor.putString("cinemas", jsonString);
+                editor.putString("PLACES", jsonString);
                 bookmarksInt = new ArrayList<>();
                 for (int i = 0; i < bookmarks.size(); ++i)
                     bookmarksInt.add(bookmarks.get(i).getId());
@@ -168,8 +168,8 @@ public class CinemaDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 0) {
-            cinema = (Cinema) data.getSerializableExtra("cinema");
-            Objects.requireNonNull(getSupportActionBar()).setTitle(cinema.getName());
+            place = (Place) data.getSerializableExtra("place");
+            Objects.requireNonNull(getSupportActionBar()).setTitle(place.getName());
         }
         init();
     }

@@ -19,6 +19,6 @@
     <item
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_delete_black_24dp"
-        android:title="Delete this cinema"
+        android:title="Delete this place"
         app:showAsAction="ifRoom" />
 </menu>

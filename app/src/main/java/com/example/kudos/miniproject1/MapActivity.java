@@ -14,9 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -38,7 +35,7 @@ import java.util.Objects;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    Cinema cinema;
+    Place place;
     Address address;
     static final ArrayList<Polyline> polylineArray = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
@@ -53,11 +50,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        cinema = (Cinema) getIntent().getSerializableExtra("cinema");
+        place = (Place) getIntent().getSerializableExtra("place");
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Cinema's location");
+        getSupportActionBar().setTitle("Place's location");
 
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -88,14 +85,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         try {
-            List<Address> addresses = new Geocoder(this).getFromLocationName(cinema.getLocation(), 1);
+            List<Address> addresses = new Geocoder(this).getFromLocationName(place.getLocation(), 1);
             if (addresses.size() != 0) {
                 address = addresses.get(0);
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Cinema"));
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Place"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
             } else
-                Toast.makeText(this, "Can not find this cinema's location!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Can not find this place's location!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
         }

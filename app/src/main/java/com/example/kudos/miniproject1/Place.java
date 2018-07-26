@@ -2,7 +2,7 @@ package com.example.kudos.miniproject1;
 
 import java.io.Serializable;
 
-public class Cinema implements Serializable{
+public class Place implements Serializable{
     private int id;
     private String avatar_name;
     private boolean avatar_internal;
@@ -12,7 +12,7 @@ public class Cinema implements Serializable{
     private String url;
     private String phone;
 
-    public Cinema(int id, String avatar_name, boolean avatar_internal, String name, String location, String description, String url, String phone) {
+    public Place(int id, String avatar_name, boolean avatar_internal, String name, String location, String description, String url, String phone) {
         this.id = id;
         this.avatar_name = avatar_name;
         this.avatar_internal = avatar_internal;
@@ -85,16 +85,5 @@ public class Cinema implements Serializable{
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this.getId()==((Cinema)obj).getId()&&
-                this.getAvatar_name().equals(((Cinema) obj).getAvatar_name()) &&
-                this.isAvatar_internal()==((Cinema)obj).isAvatar_internal()&&
-                this.getName().equals(((Cinema) obj).getName()) &&
-                this.getLocation().equals(((Cinema) obj).getLocation()) &&
-                this.getDescription().equals(((Cinema) obj).getDescription()) &&
-                this.getUrl().equals(((Cinema) obj).getUrl());
     }
 }

@@ -17,16 +17,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-public class CinemaViewAdapter extends ArrayAdapter<Cinema> {
+public class PlaceViewAdapter extends ArrayAdapter<Place> {
     private Context context;
     private int resource;
-    private ArrayList<Cinema> cinemas;
+    private ArrayList<Place> places;
 
-    public CinemaViewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Cinema> cinemas) {
-        super(context, resource, cinemas);
+    public PlaceViewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Place> places) {
+        super(context, resource, places);
         this.context = context;
         this.resource = resource;
-        this.cinemas = cinemas;
+        this.places = places;
     }
 
     @NonNull
@@ -35,17 +35,17 @@ public class CinemaViewAdapter extends ArrayAdapter<Cinema> {
         if (convertView == null)
             convertView = LayoutInflater.from(context).inflate(resource, parent, false);
 
-        Cinema cinema = cinemas.get(position);
+        Place place = places.get(position);
 
         ImageView imageView = convertView.findViewById(R.id.img_avatar);
         TextView txtName = convertView.findViewById(R.id.txtName);
         TextView txtDesc = convertView.findViewById(R.id.txtDesc);
 
-        if (!cinema.isAvatar_internal())
-            imageView.setImageResource(context.getResources().getIdentifier(cinema.getAvatar_name(), "drawable", getContext().getPackageName()));
+        if (!place.isAvatar_internal())
+            imageView.setImageResource(context.getResources().getIdentifier(place.getAvatar_name(), "drawable", getContext().getPackageName()));
         else {
             try {
-                File file = new File(context.getFilesDir(), cinema.getAvatar_name() + ".jpg");
+                File file = new File(context.getFilesDir(), place.getAvatar_name() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
@@ -54,8 +54,8 @@ public class CinemaViewAdapter extends ArrayAdapter<Cinema> {
             }
         }
 
-        txtName.setText(cinema.getName());
-        txtDesc.setText(cinema.getDescription());
+        txtName.setText(place.getName());
+        txtDesc.setText(place.getDescription());
 
         return convertView;
     }
