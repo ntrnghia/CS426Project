@@ -2,9 +2,12 @@ package com.example.kudos.miniproject1;
 
 import android.app.ActivityOptions;
 import android.app.SearchManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,17 +24,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    static final ArrayList<Place> PLACES = new ArrayList<>();
-    static final ArrayList<Place> bookmarks = new ArrayList<>();
-    private static final int idInit = 3;
+    static Resources resourcesMain;
+    static AppViewModel appViewModel;
     PlaceViewAdapter placeViewAdapter;
 
     @Override
@@ -48,40 +46,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        getSupportActionBar().setTitle("All place");
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (PLACES.size() == 0) {
-            SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            if (!sharedPreferences.contains("PLACES")) {
-                editor.putString("PLACES", new Scanner(getResources().openRawResource(R.raw.places)).useDelimiter("\\Z").next());
-                editor.apply();
+        ListView listView = findViewById(R.id.list_view);
+        placeViewAdapter = new PlaceViewAdapter(MainActivity.this, R.layout.place_item);
+        listView.setAdapter(placeViewAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, PlaceDetailActivity.class);
+                intent.putExtra("place", (Place) parent.getAdapter().getItem(position));
+                View view1 = view.findViewById(R.id.img_avatar);
+                View view2 = view.findViewById(R.id.txtName);
+                View view3 = view.findViewById(R.id.txtDesc);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create(view1, view1.getTransitionName()), Pair.create(view2, view2.getTransitionName()), Pair.create(view3, view3.getTransitionName())).toBundle());
             }
-            if (!sharedPreferences.contains("id")) {
-                editor.putInt("id", idInit);
-                editor.apply();
-            }
-            Gson gson = new Gson();
-            ArrayList<Place> places = gson.fromJson(sharedPreferences.getString("PLACES", ""), new TypeToken<ArrayList<Place>>() {
-            }.getType());
-            ArrayList<Integer> Bookmarks = gson.fromJson(sharedPreferences.getString("bookmarks", ""), new TypeToken<ArrayList<Integer>>() {
-            }.getType());
-            if (places != null)
-                if (Bookmarks == null) PLACES.addAll(places);
-                else for (int i = 0; i < places.size(); ++i) {
-                    PLACES.add(places.get(i));
-                    for (int j = 0; j < Bookmarks.size(); ++j)
-                        if (places.get(i).getId() == Bookmarks.get(j))
-                            bookmarks.add(places.get(i));
-                }
-        }
+        });
 
-        navigationView.setCheckedItem(R.id.nav_all_cinema);
-        navigationView.getMenu().performIdentifierAction(R.id.nav_all_cinema, 0);
+        resourcesMain = getResources();
+        appViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+        appViewModel.getPlaces().observe(this, new Observer<List<Place>>() {
+            @Override
+            public void onChanged(@Nullable List<Place> places) {
+                if (navigationView.getMenu().getItem(0).isChecked())
+                    placeViewAdapter.setPlaces(places);
+            }
+        });
+        appViewModel.getBookmarks().observe(this, new Observer<List<Place>>() {
+            @Override
+            public void onChanged(@Nullable List<Place> places) {
+                if (navigationView.getMenu().getItem(1).isChecked())
+                    placeViewAdapter.setPlaces(places);
+            }
+        });
 
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +90,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
             }
         });
+
+        navigationView.setCheckedItem(R.id.nav_all_cinema);
+        navigationView.getMenu().performIdentifierAction(R.id.nav_all_cinema, 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        placeViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        // Assumes current activity is the searchable activity
+        assert searchManager != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
 
@@ -129,40 +129,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.nav_all_cinema:
                 findViewById(R.id.fab).setVisibility(View.VISIBLE);
-                getSupportActionBar().setTitle("All place");
-                ListView listView = findViewById(R.id.list_view);
-                placeViewAdapter = new PlaceViewAdapter(MainActivity.this, R.layout.place_item, PLACES);
-                listView.setAdapter(placeViewAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, PlaceDetailActivity.class);
-                        intent.putExtra("place", PLACES.get(position));
-                        View view1 = view.findViewById(R.id.img_avatar);
-                        View view2 = view.findViewById(R.id.txtName);
-                        View view3 = view.findViewById(R.id.txtDesc);
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create(view1, view1.getTransitionName()), Pair.create(view2, view2.getTransitionName()), Pair.create(view3, view3.getTransitionName())).toBundle());
-                    }
-                });
+                Objects.requireNonNull(getSupportActionBar()).setTitle("All place");
+                placeViewAdapter.setPlaces(appViewModel.getPlaces().getValue());
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
                 return true;
             case R.id.nav_bookmarks:
                 findViewById(R.id.fab).setVisibility(View.INVISIBLE);
-                getSupportActionBar().setTitle("Bookmarks");
-                listView = findViewById(R.id.list_view);
-                placeViewAdapter = new PlaceViewAdapter(MainActivity.this, R.layout.place_item, bookmarks);
-                listView.setAdapter(placeViewAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, PlaceDetailActivity.class);
-                        intent.putExtra("place", bookmarks.get(position));
-                        View view1 = view.findViewById(R.id.img_avatar);
-                        View view2 = view.findViewById(R.id.txtName);
-                        View view3 = view.findViewById(R.id.txtDesc);
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create(view1, view1.getTransitionName()), Pair.create(view2, view2.getTransitionName()), Pair.create(view3, view3.getTransitionName())).toBundle());
-                    }
-                });
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Bookmarks");
+                placeViewAdapter.setPlaces(appViewModel.getBookmarks().getValue());
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
                 return true;
         }

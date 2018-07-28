@@ -3,7 +3,6 @@ package com.example.kudos.miniproject1;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,8 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,8 +30,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
-import static com.example.kudos.miniproject1.MainActivity.PLACES;
+import static com.example.kudos.miniproject1.MainActivity.appViewModel;
 
 public class AddChangePlaceActivity extends AppCompatActivity {
 
@@ -56,11 +54,11 @@ public class AddChangePlaceActivity extends AppCompatActivity {
             place = (Place) getIntent().getSerializableExtra("place");
 
             ImageView imageView = findViewById(R.id.image_add);
-            if (!place.isAvatar_internal())
+            if (!place.getAvatar_name().equals(""))
                 imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
             else {
                 try {
-                    File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
+                    File file = new File(getFilesDir(), "cinema_" + place.getId() + ".jpg");
                     Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                     imageView.setImageBitmap(bitmap);
                 } catch (FileNotFoundException e) {
@@ -109,7 +107,12 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                     if (name.getText().toString().isEmpty() || location.getText().toString().isEmpty() || description.getText().toString().isEmpty() || url.getText().toString().isEmpty() || phone.getText().toString().isEmpty())
                         Toast.makeText(this, "Can not leave blank", Toast.LENGTH_SHORT).show();
                     else {
-                        int id = getSharedPreferences("data", MODE_PRIVATE).getInt("id", 0);
+                        long id = 0;
+                        try {
+                            id = appViewModel.insertPlace(new Place("", name.getText().toString(), location.getText().toString(), description.getText().toString(), url.getText().toString(), phone.getText().toString()));
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         if (bitmap != null)
                             try {
                                 File file = new File(getFilesDir(), "cinema_" + id + ".jpg");
@@ -118,18 +121,8 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        Place new_place = new Place(id, "cinema_" + id++, true, name.getText().toString(), location.getText().toString(), description.getText().toString(), url.getText().toString(), phone.getText().toString());
-                        PLACES.add(new_place);
-                        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-                        editor.putInt("id", id);
-                        editor.apply();
-                        Intent intent = new Intent();
-                        intent.putExtra("place", place);
-                        setResult(RESULT_OK, intent);
-                        finishAfterTransition();
                     }
                 } else {
-                    place = PLACES.get(PLACES.indexOf(place));
                     if (bitmap != null) {
                         try {
                             File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
@@ -138,18 +131,18 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        place.setAvatar_internal(true);
                     }
                     place.setName(((EditText) findViewById(R.id.name_add)).getText().toString());
                     place.setLocation(((EditText) findViewById(R.id.location_add)).getText().toString());
                     place.setDescription(((EditText) findViewById(R.id.description_add)).getText().toString());
                     place.setUrl(((EditText) findViewById(R.id.url_add)).getText().toString());
                     place.setPhone(((EditText) findViewById(R.id.phone_add)).getText().toString());
+                    appViewModel.updatePlace(place);
                     Intent intent = new Intent();
                     intent.putExtra("place", place);
                     setResult(RESULT_OK, intent);
-                    finishAfterTransition();
                 }
+                finishAfterTransition();
                 return true;
             case R.id.action_identify:
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -212,16 +205,5 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 bitmap = (Bitmap) data.getExtras().get("data");
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(PLACES);
-        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-        editor.putString("PLACES", jsonString);
-        editor.apply();
     }
 }

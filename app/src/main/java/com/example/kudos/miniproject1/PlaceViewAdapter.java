@@ -15,18 +15,17 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PlaceViewAdapter extends ArrayAdapter<Place> {
     private Context context;
     private int resource;
-    private ArrayList<Place> places;
+    private List<Place> places;
 
-    public PlaceViewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Place> places) {
-        super(context, resource, places);
+    PlaceViewAdapter(@NonNull Context context, int resource) {
+        super(context, resource);
         this.context = context;
         this.resource = resource;
-        this.places = places;
     }
 
     @NonNull
@@ -41,11 +40,11 @@ public class PlaceViewAdapter extends ArrayAdapter<Place> {
         TextView txtName = convertView.findViewById(R.id.txtName);
         TextView txtDesc = convertView.findViewById(R.id.txtDesc);
 
-        if (!place.isAvatar_internal())
+        if (!place.getAvatar_name().equals(""))
             imageView.setImageResource(context.getResources().getIdentifier(place.getAvatar_name(), "drawable", getContext().getPackageName()));
         else {
             try {
-                File file = new File(context.getFilesDir(), place.getAvatar_name() + ".jpg");
+                File file = new File(context.getFilesDir(), "cinema_" + place.getId() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
@@ -58,5 +57,23 @@ public class PlaceViewAdapter extends ArrayAdapter<Place> {
         txtDesc.setText(place.getDescription());
 
         return convertView;
+    }
+
+    public void setPlaces(List<Place> places) {
+        this.places = places;
+        notifyDataSetChanged();
+    }
+
+    @Nullable
+    @Override
+    public Place getItem(int position) {
+        return places.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        if (places != null)
+            return places.size();
+        else return 0;
     }
 }

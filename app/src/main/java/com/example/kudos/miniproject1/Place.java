@@ -1,21 +1,23 @@
 package com.example.kudos.miniproject1;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.io.Serializable;
 
-public class Place implements Serializable{
+@Entity
+public class Place implements Serializable {
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String avatar_name;
-    private boolean avatar_internal;
     private String name;
     private String location;
     private String description;
     private String url;
     private String phone;
 
-    public Place(int id, String avatar_name, boolean avatar_internal, String name, String location, String description, String url, String phone) {
-        this.id = id;
+    public Place(String avatar_name, String name, String location, String description, String url, String phone) {
         this.avatar_name = avatar_name;
-        this.avatar_internal = avatar_internal;
         this.name = name;
         this.location = location;
         this.description = description;
@@ -33,18 +35,6 @@ public class Place implements Serializable{
 
     public String getAvatar_name() {
         return avatar_name;
-    }
-
-    public void setAvatar_name(String avatar_name) {
-        this.avatar_name = avatar_name;
-    }
-
-    public boolean isAvatar_internal() {
-        return avatar_internal;
-    }
-
-    public void setAvatar_internal(boolean avatar_internal) {
-        this.avatar_internal = avatar_internal;
     }
 
     public String getName() {
@@ -85,5 +75,17 @@ public class Place implements Serializable{
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getClass() == obj.getClass() &&
+                this.id == ((Place) obj).id &&
+                this.avatar_name.equals(((Place) obj).avatar_name) &&
+                this.name.equals(((Place) obj).name) &&
+                this.location.equals(((Place) obj).location) &&
+                this.description.equals(((Place) obj).description) &&
+                this.url.equals(((Place) obj).url) &&
+                this.phone.equals(((Place) obj).phone);
     }
 }

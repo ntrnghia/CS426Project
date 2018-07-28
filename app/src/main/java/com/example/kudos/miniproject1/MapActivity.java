@@ -193,6 +193,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         if (locationListener != null)
-            ((LocationManager) (getSystemService(Context.LOCATION_SERVICE))).removeUpdates(locationListener);
+            ((LocationManager) (Objects.requireNonNull(getSystemService(Context.LOCATION_SERVICE)))).removeUpdates(locationListener);
     }
 }

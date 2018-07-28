@@ -3,11 +3,9 @@ package com.example.kudos.miniproject1;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,47 +17,39 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.example.kudos.miniproject1.MainActivity.bookmarks;
-import static com.example.kudos.miniproject1.MainActivity.PLACES;
+import static com.example.kudos.miniproject1.MainActivity.appViewModel;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
     Place place;
+    Boolean isBookmark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_detail);
 
-        //getWindow().setAllowEnterTransitionOverlap(true);
-
         place = (Place) getIntent().getSerializableExtra("place");
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        ActionBar actionbar = getSupportActionBar();
-        if (actionbar != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(place.getName());
-        }
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         init();
     }
 
     private void init() {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(place.getName());
         ImageView imageView = findViewById(R.id.img_avatar);
-        if (!place.isAvatar_internal())
+        if (!place.getAvatar_name().equals(""))
             imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
         else {
             try {
-                File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
+                File file = new File(getFilesDir(), "cinema_" + place.getId() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
@@ -94,8 +84,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.cinema_detail_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.action_bookmark);
-        if (!bookmarks.contains(place)) menuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
-        else menuItem.setIcon(R.drawable.ic_favorite_black_24dp);
+        if (appViewModel.getBookmarks().getValue() == null || !(appViewModel.getBookmarks().getValue()).contains(place)) {
+            menuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
+            isBookmark = false;
+        } else {
+            menuItem.setIcon(R.drawable.ic_favorite_black_24dp);
+            isBookmark = true;
+        }
         return true;
     }
 
@@ -107,24 +102,17 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 finishAfterTransition();
                 return true;
             case R.id.action_bookmark:
-                if (!bookmarks.contains(place)) {
-                    bookmarks.add(place);
+                if (!isBookmark) {
+                    appViewModel.insertBookmark(new Bookmark(place.getId()));
                     Toast.makeText(this, "Added this place to bookmarks", Toast.LENGTH_LONG).show();
                     item.setIcon(R.drawable.ic_favorite_black_24dp);
+                    isBookmark = true;
                 } else {
-                    bookmarks.remove(place);
+                    appViewModel.deleteBookmark(new Bookmark(place.getId()));
                     Toast.makeText(this, "Removed this place from bookmarks", Toast.LENGTH_LONG).show();
                     item.setIcon(R.drawable.ic_favorite_border_black_24dp);
+                    isBookmark = false;
                 }
-                invalidateOptionsMenu();
-
-                ArrayList<Integer> bookmarksInt = new ArrayList<>();
-                for (int i = 0; i < bookmarks.size(); ++i)
-                    bookmarksInt.add(bookmarks.get(i).getId());
-                String jsonString = new Gson().toJson(bookmarksInt);
-                SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-                editor.putString("bookmarks", jsonString);
-                editor.apply();
                 return true;
             case R.id.action_place:
                 Intent intent = new Intent(PlaceDetailActivity.this, MapActivity.class);
@@ -144,20 +132,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0, ActivityOptions.makeSceneTransitionAnimation(this, Pair.create(view1, view1.getTransitionName()), Pair.create(view2, view2.getTransitionName()), Pair.create(view3, view3.getTransitionName()), Pair.create(view4, view4.getTransitionName()), Pair.create(view5, view5.getTransitionName()), Pair.create(view6, view6.getTransitionName())).toBundle());
                 return true;
             case R.id.action_delete:
-                PLACES.remove(place);
-                bookmarks.remove(place);
-
-                Gson gson = new Gson();
-                jsonString = gson.toJson(PLACES);
-                editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-                editor.putString("PLACES", jsonString);
-                bookmarksInt = new ArrayList<>();
-                for (int i = 0; i < bookmarks.size(); ++i)
-                    bookmarksInt.add(bookmarks.get(i).getId());
-                jsonString = gson.toJson(bookmarksInt);
-                editor.putString("bookmarks", jsonString);
-                editor.apply();
-
+                appViewModel.deletePlace(place);
                 finish();
                 return true;
         }
@@ -167,10 +142,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 0) {
+        if (resultCode == RESULT_OK && requestCode == 0)
             place = (Place) data.getSerializableExtra("place");
-            Objects.requireNonNull(getSupportActionBar()).setTitle(place.getName());
-        }
         init();
     }
 }
