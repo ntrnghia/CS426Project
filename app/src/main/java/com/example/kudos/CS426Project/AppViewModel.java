@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

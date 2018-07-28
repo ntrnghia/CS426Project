@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.Manifest;
 import android.content.Context;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.kudos.miniproject1.MainActivity.appViewModel;
+import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class AddChangePlaceActivity extends AppCompatActivity {
 
@@ -58,7 +58,7 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
             else {
                 try {
-                    File file = new File(getFilesDir(), "cinema_" + place.getId() + ".jpg");
+                    File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
                     Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                     imageView.setImageBitmap(bitmap);
                 } catch (FileNotFoundException e) {
@@ -115,7 +115,7 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                         }
                         if (bitmap != null)
                             try {
-                                File file = new File(getFilesDir(), "cinema_" + id + ".jpg");
+                                File file = new File(getFilesDir(), "place_" + id + ".jpg");
                                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                             } catch (IOException e) {
@@ -125,7 +125,7 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 } else {
                     if (bitmap != null) {
                         try {
-                            File file = new File(getFilesDir(), place.getAvatar_name() + ".jpg");
+                            File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
                             FileOutputStream fileOutputStream = new FileOutputStream(file);
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                         } catch (IOException e) {

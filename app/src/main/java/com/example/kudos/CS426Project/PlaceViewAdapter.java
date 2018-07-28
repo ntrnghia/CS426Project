@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -44,7 +44,7 @@ public class PlaceViewAdapter extends ArrayAdapter<Place> {
             imageView.setImageResource(context.getResources().getIdentifier(place.getAvatar_name(), "drawable", getContext().getPackageName()));
         else {
             try {
-                File file = new File(context.getFilesDir(), "cinema_" + place.getId() + ".jpg");
+                File file = new File(context.getFilesDir(), "place_" + place.getId() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {

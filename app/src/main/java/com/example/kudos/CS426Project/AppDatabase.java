@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
@@ -14,7 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.example.kudos.miniproject1.MainActivity.resourcesMain;
+import static com.example.kudos.CS426Project.MainActivity.resourcesMain;
 
 @Database(entities = {Place.class, Bookmark.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {

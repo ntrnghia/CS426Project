@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -17,7 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-import static com.example.kudos.miniproject1.MapActivity.polylineArray;
+import static com.example.kudos.CS426Project.MapActivity.polylineArray;
 
 public class GetDirections extends AsyncTask<Object, String, String> {
 

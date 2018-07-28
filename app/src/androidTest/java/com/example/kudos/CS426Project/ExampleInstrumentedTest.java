@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

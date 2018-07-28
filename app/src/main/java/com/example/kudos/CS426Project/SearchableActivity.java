@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.app.ActivityOptions;
 import android.app.SearchManager;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static android.app.SearchManager.QUERY;
-import static com.example.kudos.miniproject1.MainActivity.appViewModel;
+import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class SearchableActivity extends AppCompatActivity {
 

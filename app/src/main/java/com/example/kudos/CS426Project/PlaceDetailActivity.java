@@ -1,4 +1,4 @@
-package com.example.kudos.miniproject1;
+package com.example.kudos.CS426Project;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 
-import static com.example.kudos.miniproject1.MainActivity.appViewModel;
+import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
@@ -49,7 +49,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
             imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
         else {
             try {
-                File file = new File(getFilesDir(), "cinema_" + place.getId() + ".jpg");
+                File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
