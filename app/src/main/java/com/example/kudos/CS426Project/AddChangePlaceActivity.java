@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +72,25 @@ public class AddChangePlaceActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.location_add)).setText(place.getLocation());
             ((EditText) findViewById(R.id.description_add)).setText(place.getDescription());
         } else getSupportActionBar().setTitle("Add place");
+    }
+
+    public void btnLocationSearch_onclick(View view) {
+        String name_add = ((EditText) findViewById(R.id.name_add)).getText().toString();
+        if (!name_add.equals(""))
+            try {
+                List<Address> addresses = new Geocoder(this).getFromLocationName(name_add, 1);
+                if (addresses.size() != 0) {
+                    Address address = addresses.get(0);
+                    ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
+                    ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
+                    ((EditText) findViewById(R.id.location_add)).setText(address.getAddressLine(0));
+                } else
+                    Toast.makeText(this, "Can not find this place!", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        else
+            Toast.makeText(this, "Name field is required to search place", Toast.LENGTH_LONG).show();
     }
 
     public void btnAddPicture_onclick(View view) {

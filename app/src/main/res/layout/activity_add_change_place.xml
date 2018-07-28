@@ -38,8 +38,14 @@
                     android:id="@+id/name_add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="5.5"
                     android:transitionName="name_transition" />
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:onClick="btnLocationSearch_onclick"
+                    android:src="@drawable/ic_location_searching_black_24dp"/>
             </LinearLayout>
 
             <LinearLayout

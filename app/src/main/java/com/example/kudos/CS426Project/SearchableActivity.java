@@ -7,6 +7,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -26,6 +27,10 @@ import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class SearchableActivity extends AppCompatActivity {
 
+    PlaceViewAdapter placeViewAdapter;
+    SearchRecentSuggestions suggestions;
+    SearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +40,7 @@ public class SearchableActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         ListView listView = findViewById(R.id.list_view);
-        final PlaceViewAdapter placeViewAdapter = new PlaceViewAdapter(this, R.layout.place_item);
+        placeViewAdapter = new PlaceViewAdapter(this, R.layout.place_item);
         listView.setAdapter(placeViewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -52,7 +57,7 @@ public class SearchableActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(QUERY);
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+            suggestions = new SearchRecentSuggestions(this,
                     MySuggestionProvider.AUTHORITY, MySuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
             Objects.requireNonNull(getSupportActionBar()).setTitle(query);
@@ -64,6 +69,23 @@ public class SearchableActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        final String query = intent.getStringExtra(QUERY);
+        suggestions.saveRecentQuery(query, null);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(query);
+        final LiveData<List<Place>> myResults = appViewModel.getResults("%" + query + "%");
+        myResults.observe(this, new Observer<List<Place>>() {
+            @Override
+            public void onChanged(@Nullable List<Place> places) {
+                placeViewAdapter.setPlaces(myResults.getValue());
+            }
+        });
+        searchView.onActionViewCollapsed();
     }
 
     @Override
@@ -82,11 +104,11 @@ public class SearchableActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         // Assumes current activity is the searchable activity
         assert searchManager != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
+        //searchView.setIconifiedByDefault(false);
 
         return true;
     }

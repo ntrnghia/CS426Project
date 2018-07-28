@@ -82,7 +82,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.cinema_detail_menu, menu);
+        getMenuInflater().inflate(R.menu.place_detail_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.action_bookmark);
         if (appViewModel.getBookmarks().getValue() == null || !(appViewModel.getBookmarks().getValue()).contains(place)) {
             menuItem.setIcon(R.drawable.ic_favorite_border_black_24dp);
