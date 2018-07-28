@@ -30,7 +30,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     static Resources resourcesMain;
     static AppViewModel appViewModel;
-    PlaceViewAdapter placeViewAdapter;
+    private PlaceViewAdapter placeViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setCheckedItem(R.id.nav_all_cinema);
         navigationView.getMenu().performIdentifierAction(R.id.nav_all_cinema, 0);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

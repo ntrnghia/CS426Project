@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,9 +36,9 @@ import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class AddChangePlaceActivity extends AppCompatActivity {
 
-    Place place;
-    Bitmap bitmap;
-    Boolean is_change;
+    private Place place;
+    private Bitmap bitmap;
+    private Boolean is_change;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,4 +3,20 @@
     <string name="title_activity_direction">Map</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="name">Name</string>
+    <string name="todo">TODO</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+    <string name="url">Url</string>
+    <string name="phone">Phone</string>
+    <string name="identify_current_location">Identify current location</string>
+    <string name="done">Done</string>
+    <string name="all_place">All place</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="info">Info</string>
+    <string name="about_us">About us</string>
+    <string name="search">Search</string>
+    <string name="place_s_location">Place\'s location</string>
+    <string name="change_information">Change information</string>
+    <string name="delete_this_place">Delete this place</string>
 </resources>

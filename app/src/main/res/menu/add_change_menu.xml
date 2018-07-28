@@ -4,11 +4,11 @@
     <item
         android:id="@+id/action_identify"
         android:icon="@drawable/ic_my_location_black_24dp"
-        android:title="Identify current location"
+        android:title="@string/identify_current_location"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_done"
         android:icon="@drawable/ic_done_black_24dp"
-        android:title="Done"
+        android:title="@string/done"
         app:showAsAction="always" />
 </menu>

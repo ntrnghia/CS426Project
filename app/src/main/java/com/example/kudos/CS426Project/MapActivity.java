@@ -35,11 +35,11 @@ import java.util.Objects;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    Place place;
-    Address address;
+    private Place place;
+    private Address address;
     static final ArrayList<Polyline> polylineArray = new ArrayList<>();
-    ArrayList<Marker> markers = new ArrayList<>();
-    LocationListener locationListener;
+    private final ArrayList<Marker> markers = new ArrayList<>();
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,14 +176,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         switch (item.getItemId()) {
             case android.R.id.home:
                 finishAfterTransition();
-                return true;
-            case R.id.action_direction:
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
-                else {
-                    initLocation();
-                    updateAndDisplay();
-                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

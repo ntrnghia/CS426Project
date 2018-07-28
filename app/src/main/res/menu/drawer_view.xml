@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    <!--tools:showIn="navigation_view"-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_all_cinema"
             android:icon="@drawable/ic_store_mall_directory_black_24dp"
-            android:title="All place" />
+            android:title="@string/all_place" />
         <item
             android:id="@+id/nav_bookmarks"
             android:icon="@drawable/ic_collections_bookmark_black_24dp"
-            android:title="Bookmarks" />
+            android:title="@string/bookmarks" />
     </group>
 
-    <item android:title="Info">
+    <item android:title="@string/info">
         <menu>
             <item
                 android:id="@+id/nav_about_us"
                 android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="About us" />
+                android:title="@string/about_us" />
         </menu>
     </item>
 </menu>

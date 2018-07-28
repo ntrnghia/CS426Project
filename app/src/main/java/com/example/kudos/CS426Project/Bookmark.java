@@ -7,9 +7,9 @@ import android.arch.persistence.room.PrimaryKey;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Place.class, parentColumns = "id", childColumns = "placeId", onDelete = CASCADE))
-public class Bookmark {
+class Bookmark {
     @PrimaryKey
-    private int placeId;
+    private final int placeId;
 
     public Bookmark(int placeId) {
         this.placeId = placeId;

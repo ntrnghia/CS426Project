@@ -8,10 +8,10 @@ import android.support.annotation.NonNull;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class AppViewModel extends AndroidViewModel {
-    private Repository repository;
-    private LiveData<List<Place>> places;
-    private LiveData<List<Place>> bookmarks;
+class AppViewModel extends AndroidViewModel {
+    private final Repository repository;
+    private final LiveData<List<Place>> places;
+    private final LiveData<List<Place>> bookmarks;
 
     public AppViewModel(@NonNull Application application) {
         super(application);

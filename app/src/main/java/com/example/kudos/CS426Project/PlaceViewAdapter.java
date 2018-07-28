@@ -17,9 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class PlaceViewAdapter extends ArrayAdapter<Place> {
-    private Context context;
-    private int resource;
+class PlaceViewAdapter extends ArrayAdapter<Place> {
+    private final Context context;
+    private final int resource;
     private List<Place> places;
 
     PlaceViewAdapter(@NonNull Context context, int resource) {

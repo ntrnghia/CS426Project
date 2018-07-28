@@ -26,8 +26,8 @@ import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
-    Place place;
-    Boolean isBookmark;
+    private Place place;
+    private Boolean isBookmark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

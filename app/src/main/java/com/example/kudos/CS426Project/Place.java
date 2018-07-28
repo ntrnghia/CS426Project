@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Place implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String avatar_name;
+    private final String avatar_name;
     private String name;
     private String location;
     private String description;

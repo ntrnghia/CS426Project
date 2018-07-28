@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 import static com.example.kudos.CS426Project.MapActivity.polylineArray;
 
-public class GetDirections extends AsyncTask<Object, String, String> {
+class GetDirections extends AsyncTask<Object, String, String> {
 
     private GoogleMap mMap;
 

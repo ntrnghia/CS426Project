@@ -7,11 +7,11 @@ import android.os.AsyncTask;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class Repository {
-    private PlaceDao placeDao;
-    private LiveData<List<Place>> places;
-    private BookmarkDao bookmarkDao;
-    private LiveData<List<Place>> bookmarks;
+class Repository {
+    private final PlaceDao placeDao;
+    private final LiveData<List<Place>> places;
+    private final BookmarkDao bookmarkDao;
+    private final LiveData<List<Place>> bookmarks;
 
     Repository(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
@@ -55,7 +55,7 @@ public class Repository {
 
     private static class insertPlaceAsyncTask extends AsyncTask<Place, Void, Long> {
 
-        private PlaceDao placeDao;
+        private final PlaceDao placeDao;
 
         insertPlaceAsyncTask(PlaceDao placeDao) {
             this.placeDao = placeDao;
@@ -69,7 +69,7 @@ public class Repository {
 
     private static class updatePlaceAsyncTask extends AsyncTask<Place, Void, Void> {
 
-        private PlaceDao placeDao;
+        private final PlaceDao placeDao;
 
         updatePlaceAsyncTask(PlaceDao placeDao) {
             this.placeDao = placeDao;
@@ -84,7 +84,7 @@ public class Repository {
 
     private static class deletePlaceAsyncTask extends AsyncTask<Place, Void, Void> {
 
-        private PlaceDao placeDao;
+        private final PlaceDao placeDao;
 
         deletePlaceAsyncTask(PlaceDao placeDao) {
             this.placeDao = placeDao;
@@ -99,7 +99,7 @@ public class Repository {
 
     private static class insertBookmarkAsyncTask extends AsyncTask<Bookmark, Void, Void> {
 
-        private BookmarkDao bookmarkDao;
+        private final BookmarkDao bookmarkDao;
 
         insertBookmarkAsyncTask(BookmarkDao bookmarkDao) {
             this.bookmarkDao = bookmarkDao;
@@ -114,7 +114,7 @@ public class Repository {
 
     private static class deleteBookmarkAsyncTask extends AsyncTask<Bookmark, Void, Void> {
 
-        private BookmarkDao bookmarkDao;
+        private final BookmarkDao bookmarkDao;
 
         deleteBookmarkAsyncTask(BookmarkDao bookmarkDao) {
             this.bookmarkDao = bookmarkDao;

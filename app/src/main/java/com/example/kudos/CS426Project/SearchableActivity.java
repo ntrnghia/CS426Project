@@ -7,7 +7,6 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -27,9 +26,9 @@ import static com.example.kudos.CS426Project.MainActivity.appViewModel;
 
 public class SearchableActivity extends AppCompatActivity {
 
-    PlaceViewAdapter placeViewAdapter;
-    SearchRecentSuggestions suggestions;
-    SearchView searchView;
+    private PlaceViewAdapter placeViewAdapter;
+    private SearchRecentSuggestions suggestions;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
