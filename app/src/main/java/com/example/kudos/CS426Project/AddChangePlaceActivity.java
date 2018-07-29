@@ -80,8 +80,10 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 List<Address> addresses = new Geocoder(this).getFromLocationName(name_add, 1);
                 if (addresses.size() != 0) {
                     Address address = addresses.get(0);
-                    ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
-                    ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
+                    if (address.getUrl() != null)
+                        ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
+                    if (address.getPhone() != null)
+                        ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
                     ((EditText) findViewById(R.id.location_add)).setText(address.getAddressLine(0));
                 } else
                     Toast.makeText(this, "Can not find this place!", Toast.LENGTH_LONG).show();
@@ -198,8 +200,10 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 List<Address> addresses = new Geocoder(this).getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 if (addresses.size() != 0) {
                     Address address = addresses.get(0);
-                    ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
-                    ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
+                    if (address.getUrl() != null)
+                        ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
+                    if (address.getPhone() != null)
+                        ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
                     ((EditText) findViewById(R.id.location_add)).setText(address.getAddressLine(0));
                 } else
                     Toast.makeText(this, "Can not find this location!", Toast.LENGTH_LONG).show();
