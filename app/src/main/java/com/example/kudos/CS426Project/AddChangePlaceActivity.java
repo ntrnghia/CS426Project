@@ -119,15 +119,15 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                 finishAfterTransition();
                 return true;
             case R.id.action_done:
-                if (!is_change) {
-                    EditText name = findViewById(R.id.name_add);
-                    EditText location = findViewById(R.id.location_add);
-                    EditText description = findViewById(R.id.description_add);
-                    EditText url = findViewById(R.id.url_add);
-                    EditText phone = findViewById(R.id.phone_add);
-                    if (name.getText().toString().isEmpty() || location.getText().toString().isEmpty() || description.getText().toString().isEmpty() || url.getText().toString().isEmpty() || phone.getText().toString().isEmpty())
-                        Toast.makeText(this, "Can not leave blank", Toast.LENGTH_SHORT).show();
-                    else {
+                EditText name = findViewById(R.id.name_add);
+                EditText location = findViewById(R.id.location_add);
+                EditText description = findViewById(R.id.description_add);
+                EditText url = findViewById(R.id.url_add);
+                EditText phone = findViewById(R.id.phone_add);
+                if (name.getText().toString().isEmpty() || location.getText().toString().isEmpty() || description.getText().toString().isEmpty() || url.getText().toString().isEmpty() || phone.getText().toString().isEmpty())
+                    Toast.makeText(this, "Can not leave blank", Toast.LENGTH_SHORT).show();
+                else {
+                    if (!is_change) {
                         long id = 0;
                         try {
                             id = appViewModel.insertPlace(new Place("", name.getText().toString(), location.getText().toString(), description.getText().toString(), url.getText().toString(), phone.getText().toString()));
@@ -142,28 +142,28 @@ public class AddChangePlaceActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                    }
-                } else {
-                    if (bitmap != null) {
-                        try {
-                            File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
-                            FileOutputStream fileOutputStream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    } else {
+                        if (bitmap != null) {
+                            try {
+                                File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        place.setName(((EditText) findViewById(R.id.name_add)).getText().toString());
+                        place.setLocation(((EditText) findViewById(R.id.location_add)).getText().toString());
+                        place.setDescription(((EditText) findViewById(R.id.description_add)).getText().toString());
+                        place.setUrl(((EditText) findViewById(R.id.url_add)).getText().toString());
+                        place.setPhone(((EditText) findViewById(R.id.phone_add)).getText().toString());
+                        appViewModel.updatePlace(place);
+                        Intent intent = new Intent();
+                        intent.putExtra("place", place);
+                        setResult(RESULT_OK, intent);
                     }
-                    place.setName(((EditText) findViewById(R.id.name_add)).getText().toString());
-                    place.setLocation(((EditText) findViewById(R.id.location_add)).getText().toString());
-                    place.setDescription(((EditText) findViewById(R.id.description_add)).getText().toString());
-                    place.setUrl(((EditText) findViewById(R.id.url_add)).getText().toString());
-                    place.setPhone(((EditText) findViewById(R.id.phone_add)).getText().toString());
-                    appViewModel.updatePlace(place);
-                    Intent intent = new Intent();
-                    intent.putExtra("place", place);
-                    setResult(RESULT_OK, intent);
+                    finishAfterTransition();
                 }
-                finishAfterTransition();
                 return true;
             case R.id.action_identify:
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
