@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         ListView listView = findViewById(R.id.list_view);
-        placeViewAdapter = new PlaceViewAdapter(MainActivity.this, R.layout.place_item);
+        placeViewAdapter = new PlaceViewAdapter(MainActivity.this);
         listView.setAdapter(placeViewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

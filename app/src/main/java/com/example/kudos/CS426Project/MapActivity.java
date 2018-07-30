@@ -51,7 +51,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Place place;
     private Address address;
-    private ArrayList<Polyline> polylineArray = new ArrayList<>();
+    private final ArrayList<Polyline> polylineArray = new ArrayList<>();
     private final ArrayList<Marker> markers = new ArrayList<>();
     private LocationListener locationListener;
 
@@ -69,6 +69,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Place's location");
+
+        findViewById(R.id.show_hide).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (findViewById(R.id.time_remaining).isShown()) {
+                    ((TextView) findViewById(R.id.show_hide)).setText(R.string.show);
+                    findViewById(R.id.time_remaining).setVisibility(View.GONE);
+                    findViewById(R.id.distance).setVisibility(View.GONE);
+                } else {
+                    ((TextView) findViewById(R.id.show_hide)).setText(R.string.hide);
+                    findViewById(R.id.time_remaining).setVisibility(View.VISIBLE);
+                    findViewById(R.id.distance).setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -176,9 +191,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private static class GetDirections extends AsyncTask<String, Void, String> {
 
-        private WeakReference<MapActivity> mapActivityWeakReference;
-        private GoogleMap mMap;
-        private ArrayList<Polyline> polylineArray;
+        private final WeakReference<MapActivity> mapActivityWeakReference;
+        private final GoogleMap mMap;
+        private final ArrayList<Polyline> polylineArray;
 
         GetDirections(MapActivity mapActivity, GoogleMap mMap, ArrayList<Polyline> polylineArray) {
             this.mapActivityWeakReference = new WeakReference<>(mapActivity);
@@ -254,17 +269,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onDestroy();
         if (locationListener != null)
             ((LocationManager) (Objects.requireNonNull(getSystemService(Context.LOCATION_SERVICE)))).removeUpdates(locationListener);
-    }
-
-    public void btnShow_hide(View view) {
-        if (findViewById(R.id.time_remaining).isShown()) {
-            ((TextView) findViewById(R.id.show_hide)).setText(R.string.show);
-            findViewById(R.id.time_remaining).setVisibility(View.GONE);
-            findViewById(R.id.distance).setVisibility(View.GONE);
-        } else {
-            ((TextView) findViewById(R.id.show_hide)).setText(R.string.hide);
-            findViewById(R.id.time_remaining).setVisibility(View.VISIBLE);
-            findViewById(R.id.distance).setVisibility(View.VISIBLE);
-        }
     }
 }

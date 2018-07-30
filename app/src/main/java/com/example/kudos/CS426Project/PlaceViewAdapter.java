@@ -19,20 +19,18 @@ import java.util.List;
 
 class PlaceViewAdapter extends ArrayAdapter<Place> {
     private final Context context;
-    private final int resource;
     private List<Place> places;
 
-    PlaceViewAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
+    PlaceViewAdapter(@NonNull Context context) {
+        super(context, R.layout.place_item);
         this.context = context;
-        this.resource = resource;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null)
-            convertView = LayoutInflater.from(context).inflate(resource, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.place_item, parent, false);
 
         Place place = places.get(position);
 
@@ -41,7 +39,7 @@ class PlaceViewAdapter extends ArrayAdapter<Place> {
         TextView txtDesc = convertView.findViewById(R.id.txtDesc);
 
         if (!place.getAvatar_name().equals(""))
-            imageView.setImageResource(context.getResources().getIdentifier(place.getAvatar_name(), "drawable", getContext().getPackageName()));
+            imageView.setImageResource(context.getResources().getIdentifier(place.getAvatar_name(), "mipmap", getContext().getPackageName()));
         else {
             try {
                 File file = new File(context.getFilesDir(), "place_" + place.getId() + ".jpg");

@@ -48,6 +48,45 @@ public class AddChangePlaceActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        findViewById(R.id.add_picture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent(Intent.ACTION_PICK);
+                imageIntent.setType("image/*");
+                startActivityForResult(imageIntent, 0);
+            }
+        });
+        findViewById(R.id.take_picture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(imageIntent, 1);
+            }
+        });
+        findViewById(R.id.search_location).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name_add = ((EditText) findViewById(R.id.name_add)).getText().toString();
+                if (!name_add.equals(""))
+                    try {
+                        List<Address> addresses = new Geocoder(AddChangePlaceActivity.this).getFromLocationName(name_add, 1);
+                        if (addresses.size() != 0) {
+                            Address address = addresses.get(0);
+                            if (address.getUrl() != null)
+                                ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
+                            if (address.getPhone() != null)
+                                ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
+                            ((EditText) findViewById(R.id.location_add)).setText(address.getAddressLine(0));
+                        } else
+                            Toast.makeText(AddChangePlaceActivity.this, "Can not find this place!", Toast.LENGTH_LONG).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                else
+                    Toast.makeText(AddChangePlaceActivity.this, "Name field is required to search place", Toast.LENGTH_LONG).show();
+            }
+        });
+
         is_change = getIntent().getBooleanExtra("is_change", false);
         if (is_change) {
             getSupportActionBar().setTitle("Change information");
@@ -55,7 +94,7 @@ public class AddChangePlaceActivity extends AppCompatActivity {
 
             ImageView imageView = findViewById(R.id.image_add);
             if (!place.getAvatar_name().equals(""))
-                imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
+                imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "mipmap", getPackageName()));
             else {
                 try {
                     File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");
@@ -71,38 +110,6 @@ public class AddChangePlaceActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.location_add)).setText(place.getLocation());
             ((EditText) findViewById(R.id.description_add)).setText(place.getDescription());
         } else getSupportActionBar().setTitle("Add place");
-    }
-
-    public void btnLocationSearch_onclick(View view) {
-        String name_add = ((EditText) findViewById(R.id.name_add)).getText().toString();
-        if (!name_add.equals(""))
-            try {
-                List<Address> addresses = new Geocoder(this).getFromLocationName(name_add, 1);
-                if (addresses.size() != 0) {
-                    Address address = addresses.get(0);
-                    if (address.getUrl() != null)
-                        ((EditText) findViewById(R.id.url_add)).setText(address.getUrl());
-                    if (address.getPhone() != null)
-                        ((EditText) findViewById(R.id.phone_add)).setText(address.getPhone());
-                    ((EditText) findViewById(R.id.location_add)).setText(address.getAddressLine(0));
-                } else
-                    Toast.makeText(this, "Can not find this place!", Toast.LENGTH_LONG).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        else
-            Toast.makeText(this, "Name field is required to search place", Toast.LENGTH_LONG).show();
-    }
-
-    public void btnAddPicture_onclick(View view) {
-        Intent imageIntent = new Intent(Intent.ACTION_PICK);
-        imageIntent.setType("image/*");
-        startActivityForResult(imageIntent, 0);
-    }
-
-    public void btnTakePicture_onclick(View view) {
-        Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(imageIntent, 1);
     }
 
     @Override

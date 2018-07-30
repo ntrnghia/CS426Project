@@ -46,7 +46,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle(place.getName());
         ImageView imageView = findViewById(R.id.img_avatar);
         if (!place.getAvatar_name().equals(""))
-            imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "drawable", getPackageName()));
+            imageView.setImageResource(getResources().getIdentifier(place.getAvatar_name(), "mipmap", getPackageName()));
         else {
             try {
                 File file = new File(getFilesDir(), "place_" + place.getId() + ".jpg");

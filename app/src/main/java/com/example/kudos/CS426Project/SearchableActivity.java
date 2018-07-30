@@ -39,7 +39,7 @@ public class SearchableActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         ListView listView = findViewById(R.id.list_view);
-        placeViewAdapter = new PlaceViewAdapter(this, R.layout.place_item);
+        placeViewAdapter = new PlaceViewAdapter(this);
         listView.setAdapter(placeViewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
