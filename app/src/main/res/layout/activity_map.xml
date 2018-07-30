@@ -17,11 +17,52 @@
             android:background="?attr/colorPrimary"
             android:theme="?attr/actionBarTheme" />
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/show_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:gravity="center_horizontal"
+                    android:onClick="btnShow_hide"
+                    android:text="@string/hide"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/time_remaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?attr/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:text="@string/time_remaining"
+                    android:textSize="30sp"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?attr/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:text="@string/distance"
+                    android:textSize="30sp"
+                    android:visibility="invisible" />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

@@ -3,11 +3,13 @@ package com.example.kudos.CS426Project;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,18 +29,29 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Place place;
     private Address address;
-    static final ArrayList<Polyline> polylineArray = new ArrayList<>();
+    private ArrayList<Polyline> polylineArray = new ArrayList<>();
     private final ArrayList<Marker> markers = new ArrayList<>();
     private LocationListener locationListener;
 
@@ -143,19 +157,73 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             Objects.requireNonNull(getSupportActionBar()).setTitle("Direction");
             findViewById(R.id.fab).setVisibility(View.INVISIBLE);
+            findViewById(R.id.show_hide).setVisibility(View.VISIBLE);
+            findViewById(R.id.time_remaining).setVisibility(View.VISIBLE);
+            findViewById(R.id.distance).setVisibility(View.VISIBLE);
             for (Polyline polyline : polylineArray) polyline.remove();
             polylineArray.clear();
             for (Marker marker : markers) marker.remove();
             markers.clear();
-            Object object[] = new Object[3];
-            object[0] = mMap;
-            object[1] = "https://maps.googleapis.com/maps/api/directions/json?" + "origin=" + location.getLatitude() + "," + location.getLongitude() +
+            String url = "https://maps.googleapis.com/maps/api/directions/json?" + "origin=" + location.getLatitude() + "," + location.getLongitude() +
                     "&destination=" + address.getLatitude() + "," + address.getLongitude() +
                     "&key=AIzaSyA0yF5W8HbPRNsfDRaiMTItE_1y0kjl75Q";
-            new GetDirections().execute(object);
+            new GetDirections(this, mMap, polylineArray).execute(url);
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             markers.add(mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Your Location")));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        }
+    }
+
+    private static class GetDirections extends AsyncTask<String, Void, String> {
+
+        private WeakReference<MapActivity> mapActivityWeakReference;
+        private GoogleMap mMap;
+        private ArrayList<Polyline> polylineArray;
+
+        GetDirections(MapActivity mapActivity, GoogleMap mMap, ArrayList<Polyline> polylineArray) {
+            this.mapActivityWeakReference = new WeakReference<>(mapActivity);
+            this.mMap = mMap;
+            this.polylineArray = polylineArray;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String jsonContent = null;
+            try {
+                URLConnection urlConnection = new URL(strings[0]).openConnection();
+                urlConnection.connect();
+                InputStream inputStream = urlConnection.getInputStream();
+                jsonContent = new Scanner(inputStream).useDelimiter("\\Z").next();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return jsonContent;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try {
+                JSONArray jsonArray = new JSONObject(s).getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
+                String[] directionsList = new String[jsonArray.length()];
+                for (int i = 0; i < directionsList.length; ++i)
+                    directionsList[i] = jsonArray.getJSONObject(i).getJSONObject("polyline").getString("points");
+
+                for (String aDirectionsList : directionsList) {
+                    PolylineOptions polylineOptions = new PolylineOptions();
+                    polylineOptions.color(Color.RED);
+                    polylineOptions.width(10);
+                    polylineOptions.addAll(PolyUtil.decode(aDirectionsList));
+
+                    polylineArray.add(mMap.addPolyline(polylineOptions));
+                }
+                JSONArray jsonArray2 = new JSONObject(s).getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
+                MapActivity mapActivity = mapActivityWeakReference.get();
+                ((TextView) mapActivity.findViewById(R.id.time_remaining)).setText(jsonArray2.getJSONObject(0).getJSONObject("duration").getString("text"));
+                ((TextView) mapActivity.findViewById(R.id.distance)).setText(jsonArray2.getJSONObject(0).getJSONObject("distance").getString("text"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -186,5 +254,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onDestroy();
         if (locationListener != null)
             ((LocationManager) (Objects.requireNonNull(getSystemService(Context.LOCATION_SERVICE)))).removeUpdates(locationListener);
+    }
+
+    public void btnShow_hide(View view) {
+        if (findViewById(R.id.time_remaining).isShown()) {
+            ((TextView) findViewById(R.id.show_hide)).setText(R.string.show);
+            findViewById(R.id.time_remaining).setVisibility(View.GONE);
+            findViewById(R.id.distance).setVisibility(View.GONE);
+        } else {
+            ((TextView) findViewById(R.id.show_hide)).setText(R.string.hide);
+            findViewById(R.id.time_remaining).setVisibility(View.VISIBLE);
+            findViewById(R.id.distance).setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -19,4 +19,8 @@
     <string name="place_s_location">Place\'s location</string>
     <string name="change_information">Change information</string>
     <string name="delete_this_place">Delete this place</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="time_remaining">Time remaining</string>
+    <string name="distance">Distance</string>
 </resources>
