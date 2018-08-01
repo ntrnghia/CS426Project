@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         assert searchManager != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         //searchView.setIconifiedByDefault(false);
@@ -134,6 +134,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 placeViewAdapter.setPlaces(appViewModel.getBookmarks().getValue());
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
                 return true;
+            case R.id.nav_setting:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
         }
         return false;
     }

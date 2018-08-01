@@ -23,4 +23,5 @@
     <string name="hide">Hide</string>
     <string name="time_remaining">Time remaining</string>
     <string name="distance">Distance</string>
+    <string name="setting">Setting</string>
 </resources>
